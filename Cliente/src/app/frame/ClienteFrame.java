@@ -326,6 +326,11 @@ public class ClienteFrame extends javax.swing.JFrame {
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Onlines"));
 
+        listOnlines.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                listOnlinesMouseClicked(evt);
+            }
+        });
         jScrollPane3.setViewportView(listOnlines);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -407,6 +412,11 @@ public class ClienteFrame extends javax.swing.JFrame {
 
         jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder("Grupo"));
 
+        listGrupo.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                listGrupoMouseClicked(evt);
+            }
+        });
         listGrupo.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 listGrupoKeyPressed(evt);
@@ -444,6 +454,11 @@ public class ClienteFrame extends javax.swing.JFrame {
 
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Contatos"));
 
+        listContatos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                listContatosMouseClicked(evt);
+            }
+        });
         jScrollPane5.setViewportView(listContatos);
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
@@ -482,6 +497,11 @@ public class ClienteFrame extends javax.swing.JFrame {
 
         jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder("Contatos do Grupo"));
 
+        listContatosGrupo.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                listContatosGrupoMouseClicked(evt);
+            }
+        });
         jScrollPane6.setViewportView(listContatosGrupo);
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
@@ -767,6 +787,30 @@ public class ClienteFrame extends javax.swing.JFrame {
     private void btnAddContatoGrupo1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddContatoGrupo1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnAddContatoGrupo1ActionPerformed
+
+    private void listGrupoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listGrupoMouseClicked
+        if (evt.getClickCount() == 2) {
+            listGrupo.clearSelection();
+        }
+    }//GEN-LAST:event_listGrupoMouseClicked
+
+    private void listOnlinesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listOnlinesMouseClicked
+        if (evt.getClickCount() == 2) {
+            listOnlines.clearSelection();
+        }
+    }//GEN-LAST:event_listOnlinesMouseClicked
+
+    private void listContatosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listContatosMouseClicked
+        if (evt.getClickCount() == 2) {
+            listContatos.clearSelection();
+        }
+    }//GEN-LAST:event_listContatosMouseClicked
+
+    private void listContatosGrupoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listContatosGrupoMouseClicked
+        if (evt.getClickCount() == 2) {
+            listGrupo.clearSelection();
+        }
+    }//GEN-LAST:event_listContatosGrupoMouseClicked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton btnAddContato;
