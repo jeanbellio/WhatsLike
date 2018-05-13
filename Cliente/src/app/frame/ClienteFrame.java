@@ -109,6 +109,13 @@ public class ClienteFrame extends javax.swing.JFrame {
         this.log = new Log(this.txtName.getText());
         
         JOptionPane.showMessageDialog(this, "Conectado!");
+        if(message.getOfflineMessages().size() > 0){ 
+            StringBuilder allMessages = new StringBuilder("Mensagens recebidas offline: \n"); 
+            for (WhatsMessage offlineMessage : message.getOfflineMessages()) { 
+                allMessages.append(offlineMessage.getName()).append(" disse: ").append(offlineMessage.getText()).append("\n"); 
+            } 
+            JOptionPane.showMessageDialog(this, allMessages.toString()); 
+        } 
     }
 
     private void disconnected() {
@@ -674,10 +681,9 @@ public class ClienteFrame extends javax.swing.JFrame {
         
         this.message = new WhatsMessage();
         
-        if (this.listOnlines.getSelectedIndex() > -1) {
-            this.message.setNameReserved((String) this.listOnlines.getSelectedValue());
+        if (this.listContatos.getSelectedIndex() > -1) { 
+            this.message.setNameReserved((String) this.listContatos.getSelectedValue());
             this.message.setAction(Action.SEND_ONE);
-            this.listOnlines.clearSelection();
         } else {
             this.message.setGrupos(gruAux);
             this.message.setAction(Action.SEND_ALL);
