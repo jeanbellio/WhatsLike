@@ -385,6 +385,14 @@ public class ClienteFrame extends javax.swing.JFrame {
         txtAreaSend.setColumns(20);
         txtAreaSend.setRows(5);
         txtAreaSend.setEnabled(false);
+        txtAreaSend.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtAreaSendKeyPressed(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtAreaSendKeyTyped(evt);
+            }
+        });
         jScrollPane2.setViewportView(txtAreaSend);
 
         btnEnviar.setText("Enviar");
@@ -873,6 +881,18 @@ public class ClienteFrame extends javax.swing.JFrame {
             refreshContatos();
         }
     }//GEN-LAST:event_btnRemoveContatoActionPerformed
+
+    private void txtAreaSendKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtAreaSendKeyPressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtAreaSendKeyPressed
+
+    private void txtAreaSendKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtAreaSendKeyTyped
+        char c = evt.getKeyChar();
+        if(c == evt.VK_ENTER) {
+            this.txtAreaSend.setText(this.txtAreaSend.getText().trim());
+            btnEnviar.doClick();
+        }
+    }//GEN-LAST:event_txtAreaSendKeyTyped
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton btnAddContato;
