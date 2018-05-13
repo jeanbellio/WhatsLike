@@ -206,6 +206,23 @@ public class ClienteFrame extends javax.swing.JFrame {
         this.service.send(message);
     }
     
+    private void refreshContatos() {
+        Set<String> names = new HashSet<>();
+        
+        for(Contato con : contAux){
+            names.add(con.getNome());
+        }
+        
+        String[] array = (String[]) names.toArray(new String[names.size()]);
+        
+        this.listContatos.setListData(array);
+        this.listContatos.setLayoutOrientation(JList.VERTICAL);
+        
+        this.listOnlines.setListData(array);
+        this.listOnlines.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        this.listOnlines.setLayoutOrientation(JList.VERTICAL);
+    }
+    
     private void refreshGrupos(WhatsMessage message) {
         System.out.println(message.getGrupos().toString());
         Set<String> names = new HashSet<String>();
@@ -271,6 +288,7 @@ public class ClienteFrame extends javax.swing.JFrame {
         jPanel4 = new javax.swing.JPanel();
         jScrollPane5 = new javax.swing.JScrollPane();
         listContatos = new javax.swing.JList<>();
+        btnRemoveContato = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         nomeGrupoAdd = new javax.swing.JTextField();
         btnAddGrupo = new javax.swing.JToggleButton();
@@ -468,18 +486,30 @@ public class ClienteFrame extends javax.swing.JFrame {
         });
         jScrollPane5.setViewportView(listContatos);
 
+        btnRemoveContato.setText("Remover");
+        btnRemoveContato.setToolTipText("Selecione um contato para excluí-lo da lista");
+        btnRemoveContato.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRemoveContatoActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
+                    .addComponent(btnRemoveContato, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 201, Short.MAX_VALUE)
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
+                .addComponent(btnRemoveContato)
                 .addContainerGap())
         );
 
@@ -836,6 +866,14 @@ public class ClienteFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_listContatosGrupoMouseClicked
 
+    private void btnRemoveContatoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoveContatoActionPerformed
+        if(listContatos.getSelectedIndex() != -1){
+            listContatos.remove(listContatos.getSelectedIndex());
+            contAux.remove(listContatos.getSelectedIndex());
+            refreshContatos();
+        }
+    }//GEN-LAST:event_btnRemoveContatoActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton btnAddContato;
     private javax.swing.JToggleButton btnAddContatoGrupo;
@@ -844,6 +882,7 @@ public class ClienteFrame extends javax.swing.JFrame {
     private javax.swing.JButton btnConnectar;
     private javax.swing.JButton btnEnviar;
     private javax.swing.JButton btnLimpar;
+    private javax.swing.JButton btnRemoveContato;
     private javax.swing.JButton btnSair;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

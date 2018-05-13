@@ -3,8 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Jean/workspace/Cliente/src/app/bean/Grupo.java</file>
-            <file>file:/C:/Users/Jean/workspace/Cliente/src/app/bean/Contato.java</file>
+            <file>file:/C:/Development/workspace_java/WhatsLike/Cliente/src/app/frame/ClienteFrame.java</file>
+            <file>file:/C:/Development/workspace_java/WhatsLike/Cliente/src/app/bean/Contato.java</file>
+            <file>file:/C:/Development/workspace_java/WhatsLike/Cliente/src/app/bean/WhatsMessage.java</file>
+            <file>file:/C:/Development/workspace_java/WhatsLike/Cliente/src/app/service/ClienteService.java</file>
         </group>
     </open-files>
 </project-private>
