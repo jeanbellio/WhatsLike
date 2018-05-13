@@ -671,7 +671,7 @@ public class ClienteFrame extends javax.swing.JFrame {
     private void btnEnviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEnviarActionPerformed
         String text = this.txtAreaSend.getText();
         String name = this.message.getName();
-        
+        int selecionado = this.listOnlines.getSelectedIndex();
         this.message = new WhatsMessage();
         
         if (this.listOnlines.getSelectedIndex() > -1) {
@@ -691,7 +691,7 @@ public class ClienteFrame extends javax.swing.JFrame {
             log.gravaNoArquivo(name, text);
             this.service.send(this.message);
         }
-        
+        this.listOnlines.setSelectedIndex(selecionado);
         this.txtAreaSend.setText("");
     }//GEN-LAST:event_btnEnviarActionPerformed
     
