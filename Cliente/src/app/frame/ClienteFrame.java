@@ -38,6 +38,13 @@ public class ClienteFrame extends javax.swing.JFrame {
         
     }
 
+    private void limpaTodosSelecionados() {
+        listContatos.clearSelection();
+        listOnlines.clearSelection();
+        listGrupo.clearSelection();
+        listContatosGrupo.clearSelection();
+    }
+
     private class ListenerSocket implements Runnable {
 
         private ObjectInputStream input;
@@ -789,26 +796,43 @@ public class ClienteFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAddContatoGrupo1ActionPerformed
 
     private void listGrupoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listGrupoMouseClicked
+        
         if (evt.getClickCount() == 2) {
             listGrupo.clearSelection();
+        } else {
+            int index = listGrupo.getSelectedIndex();
+            limpaTodosSelecionados();
+            listGrupo.setSelectedIndex(index);
         }
     }//GEN-LAST:event_listGrupoMouseClicked
 
     private void listOnlinesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listOnlinesMouseClicked
         if (evt.getClickCount() == 2) {
             listOnlines.clearSelection();
+        } else {
+            int index = listOnlines.getSelectedIndex();
+            limpaTodosSelecionados();
+            listOnlines.setSelectedIndex(index);
         }
     }//GEN-LAST:event_listOnlinesMouseClicked
 
     private void listContatosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listContatosMouseClicked
         if (evt.getClickCount() == 2) {
             listContatos.clearSelection();
+        } else {
+            int index = listContatos.getSelectedIndex();
+            limpaTodosSelecionados();
+            listContatos.setSelectedIndex(index);
         }
     }//GEN-LAST:event_listContatosMouseClicked
 
     private void listContatosGrupoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listContatosGrupoMouseClicked
         if (evt.getClickCount() == 2) {
-            listGrupo.clearSelection();
+            listContatosGrupo.clearSelection();
+        } else {
+            int index = listContatosGrupo.getSelectedIndex();
+            limpaTodosSelecionados();
+            listContatosGrupo.setSelectedIndex(index);
         }
     }//GEN-LAST:event_listContatosGrupoMouseClicked
 
