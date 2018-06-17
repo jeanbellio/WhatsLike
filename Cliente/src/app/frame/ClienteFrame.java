@@ -14,7 +14,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-//import javafx.scene.chart.PieChart.Data;
 import javax.swing.*;
 
 
@@ -24,14 +23,34 @@ public class ClienteFrame extends javax.swing.JFrame {
     private WhatsMessage message;
     private ClienteService service;
     
-    private ArrayList<Contato> contAux = new ArrayList<Contato>();
-    private ArrayList<Grupo> gruAux = new ArrayList<Grupo>();
+    private ArrayList<Contato> contAux = new ArrayList<>();
+    private ArrayList<Grupo> gruAux = new ArrayList<>();
+    
+    private ArrayList<WhatsMessage> mensagensEnviadasRecebidas = new ArrayList<>();
     
     private Log log;
     
     public ClienteFrame() {
         initComponents();
         
+    }
+
+    private void mostraConversaGrupo() {
+        txtAreaReceive.setText("");
+        String proprioUsuario = txtName.getText();
+        StringBuilder menssagens = new StringBuilder();
+        String grupoClicado = listGrupo.getSelectedValue();
+        for (WhatsMessage wMessage : mensagensEnviadasRecebidas) {
+            if(wMessage.getGrupos().getNome().equals(grupoClicado)){
+                if(wMessage.getName().equals(proprioUsuario)){
+                    menssagens.append("Você disse: " + wMessage.getText());
+                } else {
+                    menssagens.append(wMessage.getName() + " disse: " + wMessage.getText());
+                }
+                menssagens.append("\n");
+            }
+        }
+        txtAreaReceive.setText(menssagens.toString());
     }
 
     private class ListenerSocket implements Runnable {
@@ -146,12 +165,31 @@ public class ClienteFrame extends javax.swing.JFrame {
 //    }
     
     private void receive(WhatsMessage message) {
-        
+        incluiOuEditaGrupo();
+        if(this.message.getGrupos() != null){
+            this.message.getGrupos().getContatosGrupo().forEach(cont -> {
+                if(!contAux.contains(cont)){
+                    contAux.add(cont);
+                    refreshContatos(message);
+//                    this.listContatos.add(cont.getNome());
+                }
+            });
+        }
         //Confere se a mensagem é o visto de recebimento
-       
         this.txtAreaReceive.append(message.getName() + " diz: " + message.getText() + "\n");
         log.gravaNoArquivo(message.getName(), message.getText());
+        mensagensEnviadasRecebidas.add(message);
+    }
 
+    private void incluiOuEditaGrupo() {
+        if(this.message.getGrupos().getNome() != null){
+            Grupo grupo = gruAux.stream().filter(cont -> cont.getNome().equals(this.message.getGrupos())).findAny().get();
+            if(grupo != null){
+                grupo.setContatosGrupo(this.message.getGrupos().getContatosGrupo());
+            } else {
+                gruAux.add(this.message.getGrupos());
+            }
+        }
     }
 
     private void refreshOnlines(WhatsMessage message) {
@@ -682,6 +720,7 @@ public class ClienteFrame extends javax.swing.JFrame {
     private void btnEnviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEnviarActionPerformed
         String text = this.txtAreaSend.getText();
         String name = this.message.getName();
+        Grupo grupoSelecionado = gruAux.stream().filter(gru -> gru.getNome().equals(listGrupo.getSelectedValue())).findFirst().get();
         
         this.message = new WhatsMessage();
         
@@ -689,17 +728,20 @@ public class ClienteFrame extends javax.swing.JFrame {
             this.message.setNameReserved((String) this.listContatos.getSelectedValue());
             this.message.setAction(Action.SEND_ONE);
         } else {
-            this.message.setGrupos(gruAux);
+            this.message.setGrupos(grupoSelecionado);
             this.message.setAction(Action.SEND_ALL);
         }
         
         if (!text.isEmpty()) {
             this.message.setName(name);
             this.message.setText(text);
-
+            if(grupoSelecionado != null){
+                this.txtAreaReceive.append("["+ grupoSelecionado.getNome() + "]");
+            } 
             this.txtAreaReceive.append("Você disse: " + text + "\n");
             log.gravaNoArquivo(name, text);
             this.service.send(this.message);
+            mensagensEnviadasRecebidas.add(this.message);
         }
         
         this.txtAreaSend.setText("");
@@ -779,7 +821,8 @@ public class ClienteFrame extends javax.swing.JFrame {
         grupo.getContatosGrupo().forEach(cont -> contactsNames.add(cont.getNome()));
         String[] str = new String[contactsNames.size()];
         this.listContatosGrupo.setListData(contactsNames.toArray(str));
-//        listContatosGrupo = new JList<>(contactsNames.toArray(str));
+        
+        mostraConversaGrupo();
     }//GEN-LAST:event_listGrupoValueChanged
 
     private void comboBoxGruposInputMethodTextChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_comboBoxGruposInputMethodTextChanged

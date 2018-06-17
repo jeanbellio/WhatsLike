@@ -16,7 +16,7 @@ public class WhatsMessage implements Serializable {
     private Set<String> setOnlines = new HashSet<String>();
     private Action action;
     private Set<String> setContatos = new HashSet<String>();
-    private ArrayList<Grupo> grupos = new ArrayList<Grupo>();
+    private Grupo grupos = new Grupo();
     private ArrayList<Contato> contatos = new ArrayList<Contato>();
     private ArrayList<Contato> contatosAux = new ArrayList<Contato>();
     private List<WhatsMessage> offlineMessages = new ArrayList<>(); 
@@ -61,11 +61,11 @@ public class WhatsMessage implements Serializable {
         this.setContatos = setContatos;
     }
 
-    public ArrayList<Grupo> getGrupos() {
+    public Grupo getGrupos() {
         return grupos;
     }
 
-    public void setGrupos(ArrayList<Grupo> grupos) {
+    public void setGrupos(Grupo grupos) {
         this.grupos = grupos;
     }
 
