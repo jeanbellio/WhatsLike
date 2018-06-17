@@ -7,14 +7,10 @@ import app.bean.WhatsMessage;
 import app.bean.WhatsMessage.Action;
 import app.service.ClienteService;
 import java.io.IOException;
-import java.io.ObjectInput;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -103,8 +99,8 @@ public class ClienteFrame extends javax.swing.JFrame {
         this.btnAddGrupo.setEnabled(true);
         this.nomeGrupoAdd.setEnabled(true);
         
-        this.nomeContatoGrupo.setEnabled(true);
-        this.nomeGrupoContato.setEnabled(true);
+        this.comboBoxGrupos.setEnabled(true);
+        this.comboBoxContatos.setEnabled(true);
         this.btnAddContatoGrupo.setEnabled(true);
         this.log = new Log(this.txtName.getText());
         
@@ -135,8 +131,8 @@ public class ClienteFrame extends javax.swing.JFrame {
         this.btnAddGrupo.setEnabled(false);
         this.nomeGrupoAdd.setEnabled(false);
         
-        this.nomeContatoGrupo.setEnabled(false);
-        this.nomeGrupoContato.setEnabled(false);
+        this.comboBoxGrupos.setEnabled(false);
+        this.comboBoxContatos.setEnabled(false);
         this.btnAddContatoGrupo.setEnabled(false);
         
         this.txtAreaReceive.setText("");
@@ -233,9 +229,9 @@ public class ClienteFrame extends javax.swing.JFrame {
             }
         }
 
-        String[] array = (String[]) names.toArray(new String[names.size()]);
+//        String[] array = (String[]) names.toArray(new String[names.size()]);
         
-        this.listContatosGrupo.setListData(array);
+//        this.listContatosGrupo.setListData(array);
         //this.listGrupo.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         this.listContatosGrupo.setLayoutOrientation(JList.VERTICAL);
     }
@@ -281,9 +277,9 @@ public class ClienteFrame extends javax.swing.JFrame {
         btnAddContatoGrupo = new javax.swing.JToggleButton();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        nomeContatoGrupo = new javax.swing.JTextField();
-        nomeGrupoContato = new javax.swing.JTextField();
         btnAddContatoGrupo1 = new javax.swing.JToggleButton();
+        comboBoxContatos = new javax.swing.JComboBox<>();
+        comboBoxGrupos = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -419,6 +415,11 @@ public class ClienteFrame extends javax.swing.JFrame {
                 listGrupoKeyPressed(evt);
             }
         });
+        listGrupo.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                listGrupoValueChanged(evt);
+            }
+        });
         jScrollPane4.setViewportView(listGrupo);
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
@@ -518,20 +519,24 @@ public class ClienteFrame extends javax.swing.JFrame {
 
         jLabel4.setText("Nome do Grupo");
 
-        nomeContatoGrupo.setEnabled(false);
-        nomeContatoGrupo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                nomeContatoGrupoActionPerformed(evt);
-            }
-        });
-
-        nomeGrupoContato.setEnabled(false);
-
         btnAddContatoGrupo1.setText("Mostrar Contatos");
         btnAddContatoGrupo1.setEnabled(false);
         btnAddContatoGrupo1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAddContatoGrupo1ActionPerformed(evt);
+            }
+        });
+
+        comboBoxGrupos.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                comboBoxGruposItemStateChanged(evt);
+            }
+        });
+        comboBoxGrupos.addInputMethodListener(new java.awt.event.InputMethodListener() {
+            public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
+            }
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
+                comboBoxGruposInputMethodTextChanged(evt);
             }
         });
 
@@ -560,39 +565,36 @@ public class ClienteFrame extends javax.swing.JFrame {
                         .addGap(26, 26, 26)
                         .addComponent(jLabel1)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(nomeGrupoAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGroup(layout.createSequentialGroup()
-                            .addGap(10, 10, 10)
-                            .addComponent(btnAddGrupo))
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                            .addComponent(jLabel2)
-                            .addGap(13, 13, 13)))
-                    .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(44, 44, 44)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(nomeGrupoAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(10, 10, 10)
+                                .addComponent(btnAddGrupo))
+                            .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel4)
+                                .addGap(24, 24, 24)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(btnAddContatoGrupo1, javax.swing.GroupLayout.DEFAULT_SIZE, 221, Short.MAX_VALUE)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(0, 0, Short.MAX_VALUE))))
+                            .addGroup(layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btnAddContatoGrupo))
+                            .addGroup(layout.createSequentialGroup()
                                 .addGap(18, 18, 18)
-                                .addComponent(nomeGrupoContato))
-                            .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel3)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(nomeContatoGrupo))))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnAddContatoGrupo))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(24, 24, 24)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnAddContatoGrupo1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 80, Short.MAX_VALUE)))))
-                .addContainerGap())
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(comboBoxContatos, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addGap(37, 37, 37)
+                        .addComponent(jLabel4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(comboBoxGrupos, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -607,24 +609,26 @@ public class ClienteFrame extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(btnAddContatoGrupo)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel2)
-                                    .addComponent(jLabel3)
-                                    .addComponent(nomeContatoGrupo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel1))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel4)
+                                        .addComponent(comboBoxGrupos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel2)
+                                        .addComponent(jLabel1)))
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                             .addComponent(nomeGrupoAdd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(jLabel4)
-                                            .addComponent(nomeGrupoContato, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                            .addComponent(jLabel3)
+                                            .addComponent(comboBoxContatos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(btnAddGrupo)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                            .addComponent(btnAddGrupo)
+                                            .addComponent(btnAddContatoGrupo))
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -723,6 +727,8 @@ public class ClienteFrame extends javax.swing.JFrame {
             /*message.getSetContatos().add(name);*/
             this.message.setAction(Action.USERS_ONLINE);
             this.service.send(message);
+            this.nomeContatoAdd.setText("");
+            refreshListContatosByGrupo();
         }
     }//GEN-LAST:event_btnAddContatoActionPerformed
 
@@ -739,32 +745,24 @@ public class ClienteFrame extends javax.swing.JFrame {
             gruAux.add(grupo);
             //message.getGrupos().add(grupo);
             refreshGrupos(message);
+            comboBoxGrupos.addItem(name);
+            this.nomeGrupoAdd.setText("");
         }
     }//GEN-LAST:event_btnAddGrupoActionPerformed
 
     private void btnAddContatoGrupoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddContatoGrupoActionPerformed
-        String nomeContato = this.nomeContatoGrupo.getText();
-        String nomeGrupo = this.nomeGrupoContato.getText();
+        String nomeContato = this.comboBoxContatos.getSelectedItem().toString();
+        String nomeGrupo = this.comboBoxGrupos.getSelectedItem().toString();
         if(!nomeContato.isEmpty() || !nomeGrupo.isEmpty()){
-            Contato contato = new Contato();
-            Grupo grupo = new Grupo();
-            
-            for(Contato con : contAux){
-                if(con.getNome().equals(nomeContato)){
-                    for(Grupo gru : gruAux){
-                        if(gru.getNome().equals(nomeGrupo)){
-                            gru.getContatosGrupo().add(con);
-                        }
-                    }
-                }
+            Contato contato = contAux.stream().filter(cont -> cont.getNome().equals(nomeContato)).findAny().get();
+            Grupo grupo = gruAux.stream().filter(cont -> cont.getNome().equals(nomeGrupo)).findAny().get();
+            if(contato != null && grupo != null){
+                grupo.getContatosGrupo().add(contato);
             }
         }
         refreshContatosGrupo();
+        refreshListContatosByGrupo();
     }//GEN-LAST:event_btnAddContatoGrupoActionPerformed
-
-    private void nomeContatoGrupoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nomeContatoGrupoActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_nomeContatoGrupoActionPerformed
 
     private void listGrupoKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_listGrupoKeyPressed
         // TODO add your handling code here:
@@ -773,6 +771,39 @@ public class ClienteFrame extends javax.swing.JFrame {
     private void btnAddContatoGrupo1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddContatoGrupo1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnAddContatoGrupo1ActionPerformed
+
+    private void listGrupoValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_listGrupoValueChanged
+        String grupoClicado = listGrupo.getSelectedValue();
+        Grupo grupo = gruAux.stream().filter(cont -> cont.getNome().equals(grupoClicado)).findAny().get();
+        ArrayList<String> contactsNames = new ArrayList<>();
+        grupo.getContatosGrupo().forEach(cont -> contactsNames.add(cont.getNome()));
+        String[] str = new String[contactsNames.size()];
+        this.listContatosGrupo.setListData(contactsNames.toArray(str));
+//        listContatosGrupo = new JList<>(contactsNames.toArray(str));
+    }//GEN-LAST:event_listGrupoValueChanged
+
+    private void comboBoxGruposInputMethodTextChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_comboBoxGruposInputMethodTextChanged
+    }//GEN-LAST:event_comboBoxGruposInputMethodTextChanged
+
+    private void comboBoxGruposItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboBoxGruposItemStateChanged
+        String grupoSelecionado = comboBoxGrupos.getSelectedItem().toString();
+        if(grupoSelecionado != null && !grupoSelecionado.isEmpty()){
+            refreshListContatosByGrupo();
+        }
+    }//GEN-LAST:event_comboBoxGruposItemStateChanged
+
+    private void refreshListContatosByGrupo() {
+        if(comboBoxGrupos.getSelectedItem() != null){
+            String grupoSelecionado = comboBoxGrupos.getSelectedItem().toString();
+            comboBoxContatos.removeAllItems();
+            Grupo grupo = gruAux.stream().filter(cont -> cont.getNome().equals(grupoSelecionado)).findAny().get();
+            for (Contato cont : contAux) {
+                if(!grupo.getContatosGrupo().stream().anyMatch(con -> con.getNome().equals(cont.getNome()))){
+                    comboBoxContatos.addItem(cont.getNome());
+                }
+            }
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton btnAddContato;
@@ -783,6 +814,8 @@ public class ClienteFrame extends javax.swing.JFrame {
     private javax.swing.JButton btnEnviar;
     private javax.swing.JButton btnLimpar;
     private javax.swing.JButton btnSair;
+    private javax.swing.JComboBox<String> comboBoxContatos;
+    private javax.swing.JComboBox<String> comboBoxGrupos;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -804,9 +837,7 @@ public class ClienteFrame extends javax.swing.JFrame {
     private javax.swing.JList<String> listGrupo;
     private javax.swing.JList listOnlines;
     private javax.swing.JTextField nomeContatoAdd;
-    private javax.swing.JTextField nomeContatoGrupo;
     private javax.swing.JTextField nomeGrupoAdd;
-    private javax.swing.JTextField nomeGrupoContato;
     private javax.swing.JTextArea txtAreaReceive;
     private javax.swing.JTextArea txtAreaSend;
     private javax.swing.JTextField txtName;
