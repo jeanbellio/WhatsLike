@@ -6,15 +6,16 @@ import app.bean.Grupo;
 import app.bean.WhatsMessage;
 import app.bean.WhatsMessage.Action;
 
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -26,6 +27,7 @@ public class ServidorService {
     private ServerSocket serverSocket;
     private Socket socket;
     private Map<String, ObjectOutputStream> mapOnlines = new HashMap<String, ObjectOutputStream>();
+    private Map<String, List<WhatsMessage>> messagesDidNotSend = new HashMap<>(); 
    
 
     public ServidorService() {
@@ -103,7 +105,11 @@ public class ServidorService {
     }
 
     private boolean connect(WhatsMessage message, ObjectOutputStream output) {
-        if (mapOnlines.size() == 0) {
+        if(messagesDidNotSend.containsKey(message.getName())){ 
+            message.setOfflineMessages(messagesDidNotSend.get(message.getName())); 
+            messagesDidNotSend.remove(message.getName()); 
+        } 
+        if (mapOnlines.isEmpty()) {
             message.setText("YES");
             send(message, output);
             return true;
@@ -145,11 +151,19 @@ public class ServidorService {
             if (kv.getKey().equals(message.getNameReserved())) {
                 try {
                     kv.getValue().writeObject(message);
+                    return;
                 } catch (IOException ex) {
                     Logger.getLogger(ServidorService.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }
+        if(messagesDidNotSend.containsKey(message.getNameReserved())){ 
+                messagesDidNotSend.get(message.getNameReserved()).add(message); 
+        } else { 
+            List<WhatsMessage> messages = new ArrayList<>(); 
+            messages.add(message); 
+            messagesDidNotSend.put(message.getNameReserved(), messages); 
+        } 
     }
 
     private void sendAll(WhatsMessage message) {

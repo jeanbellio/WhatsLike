@@ -3,8 +3,8 @@ package app.bean;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
@@ -19,6 +19,7 @@ public class WhatsMessage implements Serializable {
     private ArrayList<Grupo> grupos = new ArrayList<Grupo>();
     private ArrayList<Contato> contatos = new ArrayList<Contato>();
     private ArrayList<Contato> contatosAux = new ArrayList<Contato>();
+    private List<WhatsMessage> offlineMessages = new ArrayList<>(); 
     
     public String getName() {
         return name;
@@ -95,4 +96,13 @@ public class WhatsMessage implements Serializable {
     public enum Action {
         CONNECT, DISCONNECT, SEND_ONE, SEND_ALL, USERS_ONLINE, USERS_CONTACTS, ADD_GROUP, ADD_CONTACT_GROUP 
     }
+
+    public List<WhatsMessage> getOfflineMessages() {
+        return offlineMessages;
+    }
+
+    public void setOfflineMessages(List<WhatsMessage> offlineMessages) {
+        this.offlineMessages = offlineMessages;
+    }
+
 }

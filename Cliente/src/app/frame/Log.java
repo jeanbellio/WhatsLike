@@ -1,7 +1,9 @@
 package app.frame;
 
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -32,15 +34,37 @@ public class Log {
         this.name = name;
     }
 
-    public void gravaNoArquivo(String user, String message) {
+    Log() {
+    }
+
+    public void gravaNoArquivo(String user, String nameReserved, String message) {
         dateFormat = new SimpleDateFormat("dd-MM-yyyy");
         date = new Date();
         String dataAtual = dateFormat.format(date);
         
         try {
-            arq = new FileWriter(name + "-" + dataAtual + ".txt", true);
+            arq = new FileWriter(name + "-" + nameReserved + ".txt", true);
             out = new BufferedWriter(arq);
-            out.write(user + " diz: " + message + "\n");
+            out.write(name + " diz: " + message);
+            out.write("\n");
+            out.flush();
+            out.close();
+
+        } catch (IOException ex) {
+            System.out.println("Falha ao gravar arquivo");
+        }
+    }
+    
+    public void gravaNoArquivoReceive(String user, String nameReserved, String message) {
+        dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        date = new Date();
+        String dataAtual = dateFormat.format(date);
+        
+        try {
+            arq = new FileWriter(name + "-" + nameReserved + ".txt", true);
+            out = new BufferedWriter(arq);
+            out.write(nameReserved + " diz: " + message);
+            out.write("\n");
             out.flush();
             out.close();
 
@@ -49,4 +73,23 @@ public class Log {
         }
     }
 
+    public String leArquivo(String name, String nameReserved){
+        String conversa = "";
+        try{            
+            BufferedReader br = new BufferedReader(new FileReader(name + "-" + nameReserved + ".txt"));
+            StringBuilder conv = new StringBuilder();
+            while(br.ready()){
+                //String linha = br.readLine();
+                //System.out.println(linha);
+                conv.append(br.readLine());
+                conv.append("\n");
+            }
+            br.close();
+            conversa = conv.toString();
+        }catch(IOException ioe){
+            System.out.println("não há histórico de conversa com este contato.");
+            //ioe.printStackTrace();
+        }
+        return conversa;
+    }
 }
