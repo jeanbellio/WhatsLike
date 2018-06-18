@@ -28,7 +28,7 @@ public class ClienteFrame extends javax.swing.JFrame {
     
     private ArrayList<WhatsMessage> mensagensEnviadasRecebidas = new ArrayList<>();
     
-    private Log log;
+    private Log log = new Log();
     
     public ClienteFrame() {
         initComponents();
@@ -123,11 +123,25 @@ public class ClienteFrame extends javax.swing.JFrame {
         this.btnAddContatoGrupo.setEnabled(true);
         this.log = new Log(this.txtName.getText());
         
+        /* teste
+        Set<String> names = new HashSet<String>();
+        if(this.message.getContatos().size() > 0){
+            for(Contato con : this.message.getContatos()){
+                names.add(con.getNome());
+            }
+            String[] array = (String[]) names.toArray(new String[names.size()]);
+            listContatos.setListData(array);
+        }*/
+        
         JOptionPane.showMessageDialog(this, "Conectado!");
         if(message.getOfflineMessages().size() > 0){ 
             StringBuilder allMessages = new StringBuilder("Mensagens recebidas offline: \n"); 
             for (WhatsMessage offlineMessage : message.getOfflineMessages()) { 
                 allMessages.append(offlineMessage.getName()).append(" disse: ").append(offlineMessage.getText()).append("\n"); 
+                message.setText(offlineMessage.getText());
+                message.setNameReserved(offlineMessage.getName());
+                receive(message);
+                log.leArquivo(message.getName(), message.getNameReserved());
             } 
             JOptionPane.showMessageDialog(this, allMessages.toString()); 
         } 
@@ -171,16 +185,20 @@ public class ClienteFrame extends javax.swing.JFrame {
                 if(!contAux.contains(cont)){
                     contAux.add(cont);
                     refreshContatos(message);
-//                    this.listContatos.add(cont.getNome());
                 }
             });
         }
-        //Confere se a mensagem é o visto de recebimento
-        this.txtAreaReceive.append(message.getName() + " diz: " + message.getText() + "\n");
-        log.gravaNoArquivo(message.getName(), message.getText());
-        mensagensEnviadasRecebidas.add(message);
+	if(message.getText().equals("^")) { 
+            this.txtAreaReceive.append("^\n");
+	}else if(message.getText().equals("^^")){
+            this.txtAreaReceive.append("^^\n");
+        }else {
+            System.out.println("GRAVOU AQUI RECEIVE");
+            log.gravaNoArquivoReceive(message.getNameReserved(), message.getName(), message.getText());
+            enviarRecebimento(message);
+            this.txtAreaReceive.setText(log.leArquivo(message.getNameReserved(), message.getName()));
+	}
     }
-
     private void incluiOuEditaGrupo() {
         if(this.message.getGrupos().getNome() != null){
             Grupo grupo = gruAux.stream().filter(cont -> cont.getNome().equals(this.message.getGrupos())).findAny().get();
@@ -190,7 +208,78 @@ public class ClienteFrame extends javax.swing.JFrame {
                 gruAux.add(this.message.getGrupos());
             }
         }
+    private void enviarRecebimento(WhatsMessage message) { 
+       
+        String text = this.txtAreaSend.getText();
+        
+        String name = this.message.getName();
+        this.message = new WhatsMessage();
+        
+        if (this.listContatos.getSelectedIndex() > -1) {
+        //Confere se tem alguém selecionado se nao envia para todos
+            this.message.setNameReserved((String) this.listContatos.getSelectedValue());
+            this.message.setAction(Action.SEND_ONE);
+        } else {
+            this.message.setAction(Action.SEND_ALL);
+        }
+        //Envia mensagem de recebido para o usuário
+        this.message.setName(name);
+        this.message.setText("^");
+        this.service.send(this.message);
     }
+    private void enviarConfirmLeitura(WhatsMessage message) { 
+        String text = this.txtAreaSend.getText();
+        String name = this.message.getName();
+        
+        this.message = new WhatsMessage();
+        
+        //Confere se tem alguém selecionado se nao envia para todos
+        if (this.listContatos.getSelectedIndex() > -1) {
+            this.message.setNameReserved((String) this.listContatos.getSelectedValue());
+            this.message.setAction(Action.SEND_ONE);
+            
+            this.message.setName(name);
+            this.message.setText("^^");
+            this.service.send(this.message);
+            //this.listContatos.clearSelection();
+        } else {
+            this.message.setAction(Action.SEND_ALL);
+        }
+        
+        //Envia mensagem de recebido para o usuário
+        
+    }
+    
+    /*private void enviarRecebimento(WhatsMessage message) { 
+       
+	// this.txtAreaSend.getText();
+	
+        //nome de quem está enviando
+        String name = message.getName();
+        
+        //nome de quem está recebendo
+        String nameReserved = message.getNameReserved();
+	
+	//this.message = new WhatsMessage();
+        
+	//Confere se tem alguém selecionado se nao envia para todos
+	/*if (this.listContatos.getSelectedIndex() > -1) {
+		this.message.setNameReserved((String) this.listContatos.getSelectedValue());
+		this.message.setAction(Action.SEND_ONE);
+		this.listContatos.clearSelection();
+	} else {
+		this.message.setAction(Action.SEND_ALL);
+	}*/
+	
+	//Envia mensagem de recebido para o usuário
+	//this.message.setName(name);
+	////message.setText("^");
+        //if (this.listContatos.getSelectedIndex() > -1) {
+            //this.message.setNameReserved((String) this.listContatos.getSelectedValue());
+            ////message.setAction(Action.SEND_ONE);
+        //}
+	////this.service.send(this.message);
+   // }*/
 
     private void refreshOnlines(WhatsMessage message) {
         System.out.println(message.getSetOnlines().toString());
@@ -222,9 +311,11 @@ public class ClienteFrame extends javax.swing.JFrame {
         Set<String> names = new HashSet<String>();//message.getSetContatos();
         
         //names.remove(message.getName());
-        
+        Contato contato = new Contato();
         for(Contato con : contAux){//message.getContatos()){
             names.add(con.getNome());
+            //teste
+            this.message.getContatos().add(con);
         }
         
         String[] array = (String[]) names.toArray(new String[names.size()]);
@@ -233,9 +324,6 @@ public class ClienteFrame extends javax.swing.JFrame {
         this.listContatos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         this.listContatos.setLayoutOrientation(JList.VERTICAL);
         
-        //teste
-        //contAux = message.getContatos();
-        //refreshOnlines(message);
         this.message.setAction(Action.USERS_ONLINE);
         this.service.send(message);
     }
@@ -403,6 +491,11 @@ public class ClienteFrame extends javax.swing.JFrame {
         txtAreaSend.setColumns(20);
         txtAreaSend.setRows(5);
         txtAreaSend.setEnabled(false);
+        txtAreaSend.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtAreaSendFocusGained(evt);
+            }
+        });
         jScrollPane2.setViewportView(txtAreaSend);
 
         btnEnviar.setText("Enviar");
@@ -729,6 +822,10 @@ public class ClienteFrame extends javax.swing.JFrame {
         message.setName(this.message.getName());
         message.setAction(Action.DISCONNECT);
         this.service.send(message);
+        //this.listContatos.removeAll();
+        //this.listOnlines.removeAll();
+        //this.listGrupo.removeAll();
+        //this.listContatosGrupo.removeAll();
         disconnected();
     }//GEN-LAST:event_btnSairActionPerformed
 
@@ -739,7 +836,7 @@ public class ClienteFrame extends javax.swing.JFrame {
     private void btnEnviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEnviarActionPerformed
         String text = this.txtAreaSend.getText();
         String name = this.message.getName();
-        Grupo grupoSelecionado = gruAux.stream().filter(gru -> gru.getNome().equals(listGrupo.getSelectedValue())).findFirst().get();
+        String nameReserved = (String) this.listContatos.getSelectedValue();
         
         this.message = new WhatsMessage();
         
@@ -754,11 +851,11 @@ public class ClienteFrame extends javax.swing.JFrame {
         if (!text.isEmpty()) {
             this.message.setName(name);
             this.message.setText(text);
-            if(grupoSelecionado != null){
-                this.txtAreaReceive.append("["+ grupoSelecionado.getNome() + "]");
-            } 
-            this.txtAreaReceive.append("Você disse: " + text + "\n");
-            log.gravaNoArquivo(name, text);
+            this.message.setNameReserved((String) this.listContatos.getSelectedValue());
+
+            //this.txtAreaReceive.append("Você disse: " + text + "\n");
+            log.gravaNoArquivo(name, nameReserved, text);
+            this.txtAreaReceive.setText(log.leArquivo(name, nameReserved));
             this.service.send(this.message);
             mensagensEnviadasRecebidas.add(this.message);
         }
@@ -837,8 +934,8 @@ public class ClienteFrame extends javax.swing.JFrame {
         listContatos.clearSelection();
         listContatosGrupo.clearSelection();
         listOnlines.clearSelection();
-        
         String grupoClicado = listGrupo.getSelectedValue();
+        
         Grupo grupo = gruAux.stream().filter(cont -> cont.getNome().equals(grupoClicado)).findAny().get();
         ArrayList<String> contactsNames = new ArrayList<>();
         grupo.getContatosGrupo().forEach(cont -> contactsNames.add(cont.getNome()));
@@ -847,30 +944,27 @@ public class ClienteFrame extends javax.swing.JFrame {
         
         mostraConversaGrupo();
     }//GEN-LAST:event_listGrupoValueChanged
-
-    private void comboBoxGruposInputMethodTextChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_comboBoxGruposInputMethodTextChanged
-    }//GEN-LAST:event_comboBoxGruposInputMethodTextChanged
-
     private void comboBoxGruposItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboBoxGruposItemStateChanged
         String grupoSelecionado = comboBoxGrupos.getSelectedItem().toString();
         if(grupoSelecionado != null && !grupoSelecionado.isEmpty()){
             refreshListContatosByGrupo();
         }
     }//GEN-LAST:event_comboBoxGruposItemStateChanged
-
     private void listContatosValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_listContatosValueChanged
         listContatosGrupo.clearSelection();
         listGrupo.clearSelection();
         listOnlines.clearSelection();
+        String nameReserved = (String) this.listContatos.getSelectedValue();
+        String name = this.message.getName();
+        this.txtAreaReceive.setText(log.leArquivo(name, nameReserved));
     }//GEN-LAST:event_listContatosValueChanged
-
     private void listOnlinesInputMethodTextChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_listOnlinesInputMethodTextChanged
         listContatos.clearSelection();
         listContatosGrupo.clearSelection();
         listGrupo.clearSelection();
     }//GEN-LAST:event_listOnlinesInputMethodTextChanged
-
     private void listContatosGrupoInputMethodTextChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_listContatosGrupoInputMethodTextChanged
+
         listContatos.clearSelection();
         listGrupo.clearSelection();
         listOnlines.clearSelection();
@@ -888,7 +982,13 @@ public class ClienteFrame extends javax.swing.JFrame {
             }
         }
     }
-
+    private void txtAreaSendFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtAreaSendFocusGained
+        //if(message.getName().equals(this.message.getName())){
+            this.message.getName();
+            message.getName();
+            enviarConfirmLeitura(message);
+        //}
+    }//GEN-LAST:event_txtAreaSendFocusGained
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton btnAddContato;
     private javax.swing.JToggleButton btnAddContatoGrupo;
