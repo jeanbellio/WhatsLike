@@ -367,6 +367,13 @@ public class ClienteFrame extends javax.swing.JFrame {
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Onlines"));
 
+        listOnlines.addInputMethodListener(new java.awt.event.InputMethodListener() {
+            public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
+            }
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
+                listOnlinesInputMethodTextChanged(evt);
+            }
+        });
         jScrollPane3.setViewportView(listOnlines);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -490,6 +497,11 @@ public class ClienteFrame extends javax.swing.JFrame {
 
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Contatos"));
 
+        listContatos.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                listContatosValueChanged(evt);
+            }
+        });
         jScrollPane5.setViewportView(listContatos);
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
@@ -528,6 +540,13 @@ public class ClienteFrame extends javax.swing.JFrame {
 
         jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder("Contatos do Grupo"));
 
+        listContatosGrupo.addInputMethodListener(new java.awt.event.InputMethodListener() {
+            public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
+            }
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
+                listContatosGrupoInputMethodTextChanged(evt);
+            }
+        });
         jScrollPane6.setViewportView(listContatosGrupo);
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
@@ -815,6 +834,10 @@ public class ClienteFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAddContatoGrupo1ActionPerformed
 
     private void listGrupoValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_listGrupoValueChanged
+        listContatos.clearSelection();
+        listContatosGrupo.clearSelection();
+        listOnlines.clearSelection();
+        
         String grupoClicado = listGrupo.getSelectedValue();
         Grupo grupo = gruAux.stream().filter(cont -> cont.getNome().equals(grupoClicado)).findAny().get();
         ArrayList<String> contactsNames = new ArrayList<>();
@@ -834,6 +857,24 @@ public class ClienteFrame extends javax.swing.JFrame {
             refreshListContatosByGrupo();
         }
     }//GEN-LAST:event_comboBoxGruposItemStateChanged
+
+    private void listContatosValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_listContatosValueChanged
+        listContatosGrupo.clearSelection();
+        listGrupo.clearSelection();
+        listOnlines.clearSelection();
+    }//GEN-LAST:event_listContatosValueChanged
+
+    private void listOnlinesInputMethodTextChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_listOnlinesInputMethodTextChanged
+        listContatos.clearSelection();
+        listContatosGrupo.clearSelection();
+        listGrupo.clearSelection();
+    }//GEN-LAST:event_listOnlinesInputMethodTextChanged
+
+    private void listContatosGrupoInputMethodTextChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_listContatosGrupoInputMethodTextChanged
+        listContatos.clearSelection();
+        listGrupo.clearSelection();
+        listOnlines.clearSelection();
+    }//GEN-LAST:event_listContatosGrupoInputMethodTextChanged
 
     private void refreshListContatosByGrupo() {
         if(comboBoxGrupos.getSelectedItem() != null){
