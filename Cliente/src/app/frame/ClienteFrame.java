@@ -208,6 +208,8 @@ public class ClienteFrame extends javax.swing.JFrame {
                 gruAux.add(this.message.getGrupos());
             }
         }
+    }
+    
     private void enviarRecebimento(WhatsMessage message) { 
        
         String text = this.txtAreaSend.getText();
@@ -838,17 +840,45 @@ public class ClienteFrame extends javax.swing.JFrame {
         String name = this.message.getName();
         String nameReserved = (String) this.listContatos.getSelectedValue();
         
-        this.message = new WhatsMessage();
+        Grupo grupoSelecionado = new Grupo();
         
-        if (this.listContatos.getSelectedIndex() > -1) { 
-            this.message.setNameReserved((String) this.listContatos.getSelectedValue());
-            this.message.setAction(Action.SEND_ONE);
-        } else {
-            this.message.setGrupos(grupoSelecionado);
-            this.message.setAction(Action.SEND_ALL);
+        if(gruAux.size() > 0){
+            grupoSelecionado = gruAux.stream().filter(gru -> gru.getNome().equals(listGrupo.getSelectedValue())).findFirst().get();
         }
         
+        this.message = new WhatsMessage();
+        
         if (!text.isEmpty()) {
+        
+            if (this.listContatos.getSelectedIndex() > -1) { 
+                this.message.setNameReserved((String) this.listContatos.getSelectedValue());
+                this.message.setAction(Action.SEND_ONE);
+                
+                this.message.setName(name);
+                this.message.setText(text);
+                //this.message.setNameReserved((String) this.listContatos.getSelectedValue());
+                
+                log.gravaNoArquivo(name, nameReserved, text);
+                this.txtAreaReceive.setText(log.leArquivo(name, nameReserved));
+                this.service.send(this.message);
+                //mensagensEnviadasRecebidas.add(this.message);
+            } else {
+                this.message.setGrupos(grupoSelecionado);
+                this.message.setAction(Action.SEND_ALL);
+                
+                this.message.setName(this.txtName.getText());
+                this.message.setText(text);
+                //this.message.setNameReserved((String) this.listContatos.getSelectedValue());
+                
+                log.gravaNoArquivoGrupo(this.message.getName(), grupoSelecionado.getNome(), text);
+                this.txtAreaReceive.setText(log.leArquivoGrupo(grupoSelecionado.getNome()));
+                this.service.send(this.message);
+                //mensagensEnviadasRecebidas.add(this.message);
+            }
+        }
+        
+        
+        /*if (!text.isEmpty()) {
             this.message.setName(name);
             this.message.setText(text);
             this.message.setNameReserved((String) this.listContatos.getSelectedValue());
@@ -858,7 +888,7 @@ public class ClienteFrame extends javax.swing.JFrame {
             this.txtAreaReceive.setText(log.leArquivo(name, nameReserved));
             this.service.send(this.message);
             mensagensEnviadasRecebidas.add(this.message);
-        }
+        }*/
         
         this.txtAreaSend.setText("");
     }//GEN-LAST:event_btnEnviarActionPerformed
@@ -942,7 +972,12 @@ public class ClienteFrame extends javax.swing.JFrame {
         String[] str = new String[contactsNames.size()];
         this.listContatosGrupo.setListData(contactsNames.toArray(str));
         
-        mostraConversaGrupo();
+        //mostraConversaGrupo();
+        
+        //teste
+        String nameReserved = (String) this.listContatos.getSelectedValue();
+        String name = this.message.getName();
+        this.txtAreaReceive.setText(log.leArquivoGrupo(grupoClicado));
     }//GEN-LAST:event_listGrupoValueChanged
     private void comboBoxGruposItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboBoxGruposItemStateChanged
         String grupoSelecionado = comboBoxGrupos.getSelectedItem().toString();
@@ -982,6 +1017,10 @@ public class ClienteFrame extends javax.swing.JFrame {
             }
         }
     }
+    
+    private void comboBoxGruposInputMethodTextChanged(java.awt.event.InputMethodEvent evt) {                                                      
+    }
+    
     private void txtAreaSendFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtAreaSendFocusGained
         //if(message.getName().equals(this.message.getName())){
             this.message.getName();

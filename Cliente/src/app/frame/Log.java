@@ -92,4 +92,43 @@ public class Log {
         }
         return conversa;
     }
+    
+    public void gravaNoArquivoGrupo(String user, String nameGrupo, String message) {
+        dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        date = new Date();
+        String dataAtual = dateFormat.format(date);
+        
+        try {
+            arq = new FileWriter(nameGrupo + ".txt", true);
+            out = new BufferedWriter(arq);
+            out.write(user + " diz: " + message);
+            out.write("\n");
+            out.flush();
+            out.close();
+
+        } catch (IOException ex) {
+            System.out.println("Falha ao gravar arquivo");
+        }
+    }
+    
+    public String leArquivoGrupo(String name){
+        String conversa = "";
+        try{            
+            BufferedReader br = new BufferedReader(new FileReader(name + ".txt"));
+            StringBuilder conv = new StringBuilder();
+            while(br.ready()){
+                //String linha = br.readLine();
+                //System.out.println(linha);
+                conv.append(br.readLine());
+                conv.append("\n");
+            }
+            br.close();
+            conversa = conv.toString();
+        }catch(IOException ioe){
+            System.out.println("não há histórico de conversa deste grupo.");
+            //ioe.printStackTrace();
+        }
+        return conversa;
+    }
+    
 }
