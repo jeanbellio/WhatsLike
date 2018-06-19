@@ -179,10 +179,6 @@ public class ClienteFrame extends javax.swing.JFrame {
 //    }
     private void receive(WhatsMessage message) {
         incluiOuEditaGrupo();
-        byte[] msgEnc = crypto.toHex(message.getText());
-        byte[] msg = crypto.decode(msgEnc);
-        String mensagemRecebida = new String(msg).trim();
-        message.setText(mensagemRecebida);
         
         if (this.message.getGrupos() != null) {
             this.message.getGrupos().getContatosGrupo().forEach(cont -> {
@@ -191,13 +187,20 @@ public class ClienteFrame extends javax.swing.JFrame {
                     refreshContatos(message);
                 }
             });
+            if(gruAux.contains(this.message.getGrupos())){
+                gruAux.add(this.message.getGrupos());
+                refreshGrupos(message);
+            }
         }
         if (message.getText().equals("^")) {
             this.txtAreaReceive.append("^\n");
         } else if (message.getText().equals("^^")) {
             this.txtAreaReceive.append("^^\n");
         } else {
-            
+            byte[] msgEnc = crypto.toHex(message.getText());
+            byte[] msg = crypto.decode(msgEnc);
+            String mensagemRecebida = new String(msg).trim();
+            message.setText(mensagemRecebida);
             System.out.println("GRAVOU AQUI RECEIVE");
             log.gravaNoArquivoReceive(message.getNameReserved(), message.getName(), mensagemRecebida);
             enviarRecebimento(message);
