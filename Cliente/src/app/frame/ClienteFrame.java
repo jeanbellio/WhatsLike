@@ -178,24 +178,27 @@ public class ClienteFrame extends javax.swing.JFrame {
 //        this.txtAreaReceive.append(message.getName() + " diz: " + message.getText() + "\n");
 //    }
     private void receive(WhatsMessage message) {
-        incluiOuEditaGrupo();
-        
-        if (this.message.getGrupos() != null) {
-            this.message.getGrupos().getContatosGrupo().forEach(cont -> {
-                if (!contAux.contains(cont)) {
+        if(message.getText().length() == 32){
+            System.out.println("app.frame.ClienteFrame.receive()");
+        }
+            incluiOuEditaGrupo();
+        if (message.getGrupos().getNome()!= null && !message.getGrupos().getNome().equals("")) {
+            message.getGrupos().getContatosGrupo().forEach(cont -> {
+                if (!contAux.contains(cont) && cont.getNome().equals(txtName.getName())) {
                     contAux.add(cont);
                     refreshContatos(message);
                 }
             });
-            if(gruAux.contains(this.message.getGrupos())){
-                gruAux.add(this.message.getGrupos());
+            if(!gruAux.contains(message.getGrupos())){
+                gruAux.add(message.getGrupos());
                 refreshGrupos(message);
             }
         }
-        if (message.getText().equals("^")) {
+        if (message.getText().equals("^") && !this.txtAreaReceive.getText().endsWith("^\n")) {
+            this.txtAreaReceive.append("^");
+        } else if (message.getText().equals("^^") && !this.txtAreaReceive.getText().endsWith("^^\n")) {
             this.txtAreaReceive.append("^\n");
-        } else if (message.getText().equals("^^")) {
-            this.txtAreaReceive.append("^^\n");
+        } else if (this.txtAreaReceive.getText().endsWith("^^\n")){
         } else {
             byte[] msgEnc = crypto.toHex(message.getText());
             byte[] msg = crypto.decode(msgEnc);
@@ -809,7 +812,7 @@ public class ClienteFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnConnectarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectarActionPerformed
-        String name = this.txtName.getText();
+        String name = this.txtName.getText().trim();
 
         if (!name.isEmpty()) {
             this.message = new WhatsMessage();
@@ -851,7 +854,7 @@ public class ClienteFrame extends javax.swing.JFrame {
 
         Grupo grupoSelecionado = new Grupo();
 
-        if (gruAux.size() > 0) {
+        if (gruAux != null && gruAux.size() > 0) {
             grupoSelecionado = gruAux.stream().filter(gru -> gru.getNome().equals(listGrupo.getSelectedValue())).findFirst().get();
         }
 
