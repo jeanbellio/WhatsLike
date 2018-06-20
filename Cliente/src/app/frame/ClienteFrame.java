@@ -1024,15 +1024,8 @@ public class ClienteFrame extends javax.swing.JFrame {
         this.txtAreaReceive.setText(log.leArquivo(name, nameReserved));
     }//GEN-LAST:event_listContatosValueChanged
     private void listOnlinesInputMethodTextChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_listOnlinesInputMethodTextChanged
-        listContatos.clearSelection();
-        listContatosGrupo.clearSelection();
-        listGrupo.clearSelection();
     }//GEN-LAST:event_listOnlinesInputMethodTextChanged
     private void listContatosGrupoInputMethodTextChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_listContatosGrupoInputMethodTextChanged
-
-        listContatos.clearSelection();
-        listGrupo.clearSelection();
-        listOnlines.clearSelection();
     }//GEN-LAST:event_listContatosGrupoInputMethodTextChanged
 
     private void refreshListContatosByGrupo() {
@@ -1079,14 +1072,7 @@ public class ClienteFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_listContatosMouseClicked
 
     private void listContatosGrupoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listContatosGrupoMouseClicked
-        if (evt.getClickCount() == 2){
-            listContatosGrupo.clearSelection();
-        }
-        if(listContatosGrupo.getSelectedValue() != null){
-            listContatos.clearSelection();
-            listGrupo.clearSelection();
-            listOnlines.clearSelection();
-        }
+        listContatosGrupo.clearSelection();
     }//GEN-LAST:event_listContatosGrupoMouseClicked
 
     private void listOnlinesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listOnlinesMouseClicked
