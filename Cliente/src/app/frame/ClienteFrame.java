@@ -15,7 +15,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
-import sun.applet.Main;
 
 public class ClienteFrame extends javax.swing.JFrame {
 
@@ -123,7 +122,7 @@ public class ClienteFrame extends javax.swing.JFrame {
         this.comboBoxContatos.setEnabled(true);
         this.btnAddContatoGrupo.setEnabled(true);
         this.log = new Log(this.txtName.getText());
-
+        JOptionPane.showMessageDialog(this, "Conectado!");
         /* teste
         Set<String> names = new HashSet<String>();
         if(this.message.getContatos().size() > 0){
@@ -133,18 +132,6 @@ public class ClienteFrame extends javax.swing.JFrame {
             String[] array = (String[]) names.toArray(new String[names.size()]);
             listContatos.setListData(array);
         }*/
-        JOptionPane.showMessageDialog(this, "Conectado!");
-        if (message.getOfflineMessages().size() > 0) {
-            StringBuilder allMessages = new StringBuilder("Mensagens recebidas offline: \n");
-            for (WhatsMessage offlineMessage : message.getOfflineMessages()) {
-                allMessages.append(offlineMessage.getName()).append(" disse: ").append(offlineMessage.getText()).append("\n");
-                message.setText(offlineMessage.getText());
-                message.setNameReserved(offlineMessage.getName());
-                receive(message);
-                log.leArquivo(message.getName(), message.getNameReserved());
-            }
-            JOptionPane.showMessageDialog(this, allMessages.toString());
-        }
     }
 
     private void disconnected() {
@@ -181,7 +168,7 @@ public class ClienteFrame extends javax.swing.JFrame {
         if(message.getText().length() == 32){
             System.out.println("app.frame.ClienteFrame.receive()");
         }
-            incluiOuEditaGrupo();
+        incluiOuEditaGrupo();
         if (message.getGrupos().getNome()!= null && !message.getGrupos().getNome().equals("")) {
             message.getGrupos().getContatosGrupo().forEach(cont -> {
                 if (!contAux.contains(cont) && cont.getNome().equals(txtName.getName())) {
@@ -466,6 +453,11 @@ public class ClienteFrame extends javax.swing.JFrame {
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Onlines"));
 
+        listOnlines.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                listOnlinesMouseClicked(evt);
+            }
+        });
         listOnlines.addInputMethodListener(new java.awt.event.InputMethodListener() {
             public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
             }
@@ -559,6 +551,11 @@ public class ClienteFrame extends javax.swing.JFrame {
 
         jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder("Grupo"));
 
+        listGrupo.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                listGrupoMouseClicked(evt);
+            }
+        });
         listGrupo.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 listGrupoKeyPressed(evt);
@@ -601,6 +598,16 @@ public class ClienteFrame extends javax.swing.JFrame {
 
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Contatos"));
 
+        listContatos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                listContatosMouseClicked(evt);
+            }
+        });
+        listContatos.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                listContatosKeyPressed(evt);
+            }
+        });
         listContatos.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
                 listContatosValueChanged(evt);
@@ -644,6 +651,11 @@ public class ClienteFrame extends javax.swing.JFrame {
 
         jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder("Contatos do Grupo"));
 
+        listContatosGrupo.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                listContatosGrupoMouseClicked(evt);
+            }
+        });
         listContatosGrupo.addInputMethodListener(new java.awt.event.InputMethodListener() {
             public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
             }
@@ -698,6 +710,11 @@ public class ClienteFrame extends javax.swing.JFrame {
             }
             public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
                 comboBoxGruposInputMethodTextChanged(evt);
+            }
+        });
+        comboBoxGrupos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboBoxGruposActionPerformed(evt);
             }
         });
 
@@ -913,6 +930,9 @@ public class ClienteFrame extends javax.swing.JFrame {
 
     private void btnAddContatoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddContatoActionPerformed
         String name = this.nomeContatoAdd.getText();
+        if(name.equals(this.txtName.getText())){
+            return;
+        }
         //System.out.println(this.listOnlines.toString() + " - " + this.listOnlines);
         if (!name.isEmpty()) {
             System.out.println("nome para add: " + name);
@@ -975,12 +995,13 @@ public class ClienteFrame extends javax.swing.JFrame {
         listContatosGrupo.clearSelection();
         listOnlines.clearSelection();
         String grupoClicado = listGrupo.getSelectedValue();
-
-        Grupo grupo = gruAux.stream().filter(cont -> cont.getNome().equals(grupoClicado)).findAny().get();
-        ArrayList<String> contactsNames = new ArrayList<>();
-        grupo.getContatosGrupo().forEach(cont -> contactsNames.add(cont.getNome()));
-        String[] str = new String[contactsNames.size()];
-        this.listContatosGrupo.setListData(contactsNames.toArray(str));
+        if(grupoClicado != null){
+            Grupo grupo = gruAux.stream().filter(cont -> cont.getNome().equals(grupoClicado)).findAny().get();
+            ArrayList<String> contactsNames = new ArrayList<>();
+            grupo.getContatosGrupo().forEach(cont -> contactsNames.add(cont.getNome()));
+            String[] str = new String[contactsNames.size()];
+            this.listContatosGrupo.setListData(contactsNames.toArray(str));
+        }
 
         //mostraConversaGrupo();
         //teste
@@ -1034,9 +1055,62 @@ public class ClienteFrame extends javax.swing.JFrame {
         //if(message.getName().equals(this.message.getName())){
         this.message.getName();
         message.getName();
-        enviarConfirmLeitura(message);
+//        enviarConfirmLeitura(message);
         //}
     }//GEN-LAST:event_txtAreaSendFocusGained
+
+    private void comboBoxGruposActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBoxGruposActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_comboBoxGruposActionPerformed
+
+    private void listContatosKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_listContatosKeyPressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_listContatosKeyPressed
+
+    private void listContatosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listContatosMouseClicked
+        if (evt.getClickCount() == 2){
+            listContatos.clearSelection();
+        }
+        if(listContatos.getSelectedValue() != null){
+            listContatosGrupo.clearSelection();
+            listGrupo.clearSelection();
+            listOnlines.clearSelection();
+        }
+    }//GEN-LAST:event_listContatosMouseClicked
+
+    private void listContatosGrupoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listContatosGrupoMouseClicked
+        if (evt.getClickCount() == 2){
+            listContatosGrupo.clearSelection();
+        }
+        if(listContatosGrupo.getSelectedValue() != null){
+            listContatos.clearSelection();
+            listGrupo.clearSelection();
+            listOnlines.clearSelection();
+        }
+    }//GEN-LAST:event_listContatosGrupoMouseClicked
+
+    private void listOnlinesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listOnlinesMouseClicked
+        if (evt.getClickCount() == 2){
+            listOnlines.clearSelection();
+        }
+        if(listOnlines.getSelectedValue() != null){
+            listContatos.clearSelection();
+            listGrupo.clearSelection();
+            listContatosGrupo.clearSelection();
+        }
+    }//GEN-LAST:event_listOnlinesMouseClicked
+
+    private void listGrupoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listGrupoMouseClicked
+        if (evt.getClickCount() == 2){
+            listGrupo.clearSelection();
+        }
+        if(listGrupo.getSelectedValue() != null){
+            listContatos.clearSelection();
+            listOnlines.clearSelection();
+            listContatosGrupo.clearSelection();
+        }
+    }//GEN-LAST:event_listGrupoMouseClicked
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton btnAddContato;
     private javax.swing.JToggleButton btnAddContatoGrupo;

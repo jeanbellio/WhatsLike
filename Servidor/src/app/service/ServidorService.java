@@ -13,7 +13,6 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -29,8 +28,6 @@ public class ServidorService {
     private Socket socket;
     private Map<String, ObjectOutputStream> mapOnlines = new HashMap<String, ObjectOutputStream>();
     private Map<String, List<WhatsMessage>> messagesDidNotSend = new HashMap<>(); 
-    private List<Grupo> gruposExistentes = new ArrayList<>();
-   
 
     public ServidorService() {
         try {
@@ -73,9 +70,6 @@ public class ServidorService {
             try {
                 while ((message = (WhatsMessage) input.readObject()) != null) {
                      Action action = message.getAction();
-//                    if (!Collections.disjoint(gruposExistentes, message.getGrupos())) {
-//                        gruposExistentes.addAll(message.getGrupos());
-//                    }
                     if (action.equals(Action.CONNECT)) {
                         boolean isConnect = connect(message, output);
                         if (isConnect) {
@@ -109,10 +103,6 @@ public class ServidorService {
     }
 
     private boolean connect(WhatsMessage message, ObjectOutputStream output) {
-        if(messagesDidNotSend.containsKey(message.getName())){ 
-            message.setOfflineMessages(messagesDidNotSend.get(message.getName())); 
-            messagesDidNotSend.remove(message.getName()); 
-        } 
         if (mapOnlines.isEmpty()) {
             message.setText("YES");
             send(message, output);
