@@ -96,5 +96,13 @@ public class WhatsMessage implements Serializable {
     public enum Action {
         CONNECT, DISCONNECT, SEND_ONE, SEND_ALL, USERS_ONLINE, USERS_CONTACTS, ADD_GROUP, ADD_CONTACT_GROUP 
     }
+    
+    public List<WhatsMessage> getOfflineMessages() {
+        return offlineMessages;
+    }
+
+    public void setOfflineMessages(List<WhatsMessage> offlineMessages) {
+        this.offlineMessages = offlineMessages;
+    }
 
 }

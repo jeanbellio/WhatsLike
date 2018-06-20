@@ -122,7 +122,7 @@ public class ClienteFrame extends javax.swing.JFrame {
         this.comboBoxContatos.setEnabled(true);
         this.btnAddContatoGrupo.setEnabled(true);
         this.log = new Log(this.txtName.getText());
-        JOptionPane.showMessageDialog(this, "Conectado!");
+        //JOptionPane.showMessageDialog(this, "Conectado!");
         /* teste
         Set<String> names = new HashSet<String>();
         if(this.message.getContatos().size() > 0){
@@ -132,6 +132,19 @@ public class ClienteFrame extends javax.swing.JFrame {
             String[] array = (String[]) names.toArray(new String[names.size()]);
             listContatos.setListData(array);
         }*/
+        
+        JOptionPane.showMessageDialog(this, "Conectado!");
+        if(message.getOfflineMessages().size() > 0){ 
+            StringBuilder allMessages = new StringBuilder("Mensagens recebidas offline: \n"); 
+            for (WhatsMessage offlineMessage : message.getOfflineMessages()) { 
+                allMessages.append(offlineMessage.getName()).append(" disse: ").append(offlineMessage.getText()).append("\n"); 
+                message.setText(offlineMessage.getText());
+                message.setNameReserved(offlineMessage.getName());
+                receive(message);
+                log.leArquivo(message.getName(), message.getNameReserved());
+            } 
+            JOptionPane.showMessageDialog(this, allMessages.toString()); 
+        }
     }
 
     private void disconnected() {
