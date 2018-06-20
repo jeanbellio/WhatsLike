@@ -19,6 +19,7 @@ public class WhatsMessage implements Serializable {
     private Grupo grupos = new Grupo();
     private ArrayList<Contato> contatos = new ArrayList<Contato>();
     private ArrayList<Contato> contatosAux = new ArrayList<Contato>();
+    private List<WhatsMessage> offlineMessages = new ArrayList<>(); 
     
     public String getName() {
         return name;

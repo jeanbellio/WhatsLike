@@ -34,7 +34,7 @@ public class ServidorService {
             serverSocket = new ServerSocket(5555);
             if (!serverSocket.isBound()){
 //            serverSocket.bind(new InetSocketAddress("10.32.148.91", 5555));
-           serverSocket.bind(new InetSocketAddress("localhost", 5555));
+           serverSocket.bind(new InetSocketAddress("10.32.148.50", 5555));
            // serverSocket.bind(new InetSocketAddress("10.32.148.14", 5555));
             }
             System.out.println("Servidor on!");
@@ -103,6 +103,10 @@ public class ServidorService {
     }
 
     private boolean connect(WhatsMessage message, ObjectOutputStream output) {
+        if(messagesDidNotSend.containsKey(message.getName())){
+            message.setOfflineMessages(messagesDidNotSend.get(message.getName()));
+            messagesDidNotSend.remove(message.getName());
+        }
         if (mapOnlines.isEmpty()) {
             message.setText("YES");
             send(message, output);
