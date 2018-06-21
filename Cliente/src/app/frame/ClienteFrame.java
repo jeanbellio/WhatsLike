@@ -136,8 +136,12 @@ public class ClienteFrame extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(this, "Conectado!");
         if(message.getOfflineMessages().size() > 0){ 
             StringBuilder allMessages = new StringBuilder("Mensagens recebidas offline: \n"); 
-            for (WhatsMessage offlineMessage : message.getOfflineMessages()) { 
-                allMessages.append(offlineMessage.getName()).append(" disse: ").append(offlineMessage.getText()).append("\n"); 
+            
+            for (WhatsMessage offlineMessage : message.getOfflineMessages()) {
+                byte[] msgEnc = crypto.toHex(offlineMessage.getText());
+                byte[] msg = crypto.decode(msgEnc);
+                String mensagemRecebida = new String(msg).trim();
+                allMessages.append(offlineMessage.getName()).append(" disse: ").append(mensagemRecebida).append("\n"); 
                 message.setText(offlineMessage.getText());
                 message.setNameReserved(offlineMessage.getName());
                 receive(message);
