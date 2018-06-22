@@ -93,7 +93,7 @@ public class Log {
         return conversa;
     }
     
-    public void gravaNoArquivoGrupo(String user, String nameGrupo, String message) {
+    public void gravaNoArquivoGrupo(String user, String nameGrupo, String nomeEnviou, String message) {
         dateFormat = new SimpleDateFormat("dd-MM-yyyy");
         date = new Date();
         String dataAtual = dateFormat.format(date);
@@ -101,7 +101,7 @@ public class Log {
         try {
             arq = new FileWriter(nameGrupo + ".txt", true);
             out = new BufferedWriter(arq);
-            out.write(user + " diz: " + message);
+            out.write(nomeEnviou + " diz: " + message);
             out.write("\n");
             out.flush();
             out.close();

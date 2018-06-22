@@ -143,7 +143,11 @@ public class ClienteFrame extends javax.swing.JFrame {
                 String mensagemRecebida = new String(msg).trim();
                 allMessages.append(offlineMessage.getName()).append(" disse: ").append(mensagemRecebida).append("\n"); 
                 message.setText(offlineMessage.getText());
-                message.setNameReserved(offlineMessage.getName());
+                message.setName(offlineMessage.getName());
+                message.setNameReserved(offlineMessage.getNameReserved());
+                
+                //log.gravaNoArquivo(offlineMessage.getNameReserved(), offlineMessage.getName(), mensagemRecebida);
+                
                 receive(message);
                 log.leArquivo(message.getName(), message.getNameReserved());
             } 
@@ -209,15 +213,19 @@ public class ClienteFrame extends javax.swing.JFrame {
             String mensagemRecebida = new String(msg).trim();
             message.setText(mensagemRecebida);
             System.out.println("GRAVOU AQUI RECEIVE");
-            log.gravaNoArquivoReceive(message.getNameReserved(), message.getName(), mensagemRecebida);
+            if(message.getGrupos().getNome() != null){
+                log.gravaNoArquivoGrupo(this.message.getName(), message.getGrupos().getNome(), message.getName(), mensagemRecebida);
+            }else{
+                log.gravaNoArquivoReceive(message.getNameReserved(), message.getName(), mensagemRecebida);
+            }
             enviarRecebimento(message);
             this.txtAreaReceive.setText(log.leArquivo(message.getNameReserved(), message.getName()));
         }
     }
 
     private void incluiOuEditaGrupo() {
-        if (this.message.getGrupos().getNome() != null) {
-            Grupo grupo = gruAux.stream().filter(cont -> cont.getNome().equals(this.message.getGrupos())).findAny().get();
+        if (this.message.getGrupos() != null && this.message.getGrupos().getNome() != null) {
+            Grupo grupo = gruAux.stream().filter(gru -> gru.getNome().equals(this.message.getGrupos().getNome())).findAny().get();
             if (grupo != null) {
                 grupo.setContatosGrupo(this.message.getGrupos().getContatosGrupo());
             } else {
@@ -916,7 +924,7 @@ public class ClienteFrame extends javax.swing.JFrame {
                 this.message.setText(msgParaEnviar);
                 //this.message.setNameReserved((String) this.listContatos.getSelectedValue());
 
-                log.gravaNoArquivoGrupo(this.message.getName(), grupoSelecionado.getNome(), text);
+                log.gravaNoArquivoGrupo(this.message.getName(), grupoSelecionado.getNome(),this.message.getName() , text);
                 this.txtAreaReceive.setText(log.leArquivoGrupo(grupoSelecionado.getNome()));
                 this.service.send(this.message);
                 //mensagensEnviadasRecebidas.add(this.message);
